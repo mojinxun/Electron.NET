@@ -464,49 +464,40 @@ namespace ElectronNET.API
         /// The current application directory.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> GetAppPathAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetAppPathAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using(cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetAppPathCompleted", (path) =>
             {
-                BridgeConnector.Socket.On("appGetAppPathCompleted", (path) =>
-                {
-                    BridgeConnector.Socket.Off("appGetAppPathCompleted");
-                    taskCompletionSource.SetResult(path.ToString());
-                });
+                BridgeConnector.Socket.Off("appGetAppPathCompleted");
+                taskCompletionSource.SetResult(path.ToString());
+            });
 
-                BridgeConnector.Socket.Emit("appGetAppPath");
+            BridgeConnector.Socket.Emit("appGetAppPath");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }            
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// You can request the following paths by the name.
         /// </summary>
+        /// <param name="pathName"></param>
         /// <returns>A path to a special directory or file associated with name.</returns>
-        public async Task<string> GetPathAsync(PathName pathName, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetPathAsync(PathName pathName)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using(cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
-            {
-                BridgeConnector.Socket.On("appGetPathCompleted", (path) =>
-                {
-                    BridgeConnector.Socket.Off("appGetPathCompleted");
 
-                    taskCompletionSource.SetResult(path.ToString());
-                });
+            BridgeConnector.Socket.On("appGetPathCompleted", (path) =>
+                    {
+                        BridgeConnector.Socket.Off("appGetPathCompleted");
 
-                BridgeConnector.Socket.Emit("appGetPath", pathName.ToString());
+                        taskCompletionSource.SetResult(path.ToString());
+                    });
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }  
+            BridgeConnector.Socket.Emit("appGetPath", pathName.ToString());
+
+            return await taskCompletionSource.Task;
         }
 
 
@@ -531,24 +522,19 @@ namespace ElectronNET.API
         /// the version of the current bundle or executable is returned.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> GetVersionAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetVersionAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using(cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetVersionCompleted", (version) =>
             {
-                BridgeConnector.Socket.On("appGetVersionCompleted", (version) =>
-                {
-                    BridgeConnector.Socket.Off("appGetVersionCompleted");
-                    taskCompletionSource.SetResult(version.ToString());
-                });
+                BridgeConnector.Socket.Off("appGetVersionCompleted");
+                taskCompletionSource.SetResult(version.ToString());
+            });
 
-                BridgeConnector.Socket.Emit("appGetVersion");
+            BridgeConnector.Socket.Emit("appGetVersion");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -558,24 +544,19 @@ namespace ElectronNET.API
         /// name by Electron.
         /// </summary>
         /// <returns>The current application’s name, which is the name in the application’s package.json file.</returns>
-        public async Task<string> GetNameAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetNameAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using(cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetNameCompleted", (name) =>
             {
-                BridgeConnector.Socket.On("appGetNameCompleted", (name) =>
-                {
-                    BridgeConnector.Socket.Off("appGetNameCompleted");
-                    taskCompletionSource.SetResult(name.ToString());
-                });
+                BridgeConnector.Socket.Off("appGetNameCompleted");
+                taskCompletionSource.SetResult(name.ToString());
+            });
 
-                BridgeConnector.Socket.Emit("appGetName");
+            BridgeConnector.Socket.Emit("appGetName");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -593,24 +574,19 @@ namespace ElectronNET.API
         ///  folder.Note: On Windows you have to call it after the ready events gets emitted.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> GetLocaleAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetLocaleAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetLocaleCompleted", (locale) =>
             {
-                BridgeConnector.Socket.On("appGetLocaleCompleted", (local) =>
-                {
-                    BridgeConnector.Socket.Off("appGetLocaleCompleted");
-                    taskCompletionSource.SetResult(local.ToString());
-                });
+                BridgeConnector.Socket.Off("appGetLocaleCompleted");
+                taskCompletionSource.SetResult(locale.ToString());
+            });
 
-                BridgeConnector.Socket.Emit("appGetLocale");
+            BridgeConnector.Socket.Emit("appGetLocale");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -649,26 +625,20 @@ namespace ElectronNET.API
         /// <param name="protocol">The name of your protocol, without ://. 
         /// If you want your app to handle electron:// links, 
         /// call this method with electron as the parameter.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol);
+            BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -689,26 +659,20 @@ namespace ElectronNET.API
         /// If you want your app to handle electron:// links, 
         /// call this method with electron as the parameter.</param>
         /// <param name="path">Defaults to process.execPath</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol, string path, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol, string path)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol, path);
+            BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol, path);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -730,26 +694,20 @@ namespace ElectronNET.API
         /// call this method with electron as the parameter.</param>
         /// <param name="path">Defaults to process.execPath</param>
         /// <param name="args">Defaults to an empty array</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol, string path, string[] args, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> SetAsDefaultProtocolClientAsync(string protocol, string path, string[] args)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appSetAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appSetAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol, path, args);
+            BridgeConnector.Socket.Emit("appSetAsDefaultProtocolClient", protocol, path, args);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -757,26 +715,20 @@ namespace ElectronNET.API
         /// protocol(aka URI scheme). If so, it will remove the app as the default handler.
         /// </summary>
         /// <param name="protocol">The name of your protocol, without ://.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol);
+            BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -785,26 +737,20 @@ namespace ElectronNET.API
         /// </summary>
         /// <param name="protocol">The name of your protocol, without ://.</param>
         /// <param name="path">Defaults to process.execPath.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol, string path, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol, string path)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol, path);
+            BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol, path);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -814,26 +760,20 @@ namespace ElectronNET.API
         /// <param name="protocol">The name of your protocol, without ://.</param>
         /// <param name="path">Defaults to process.execPath.</param>
         /// <param name="args">Defaults to an empty array.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol, string path, string[] args, CancellationToken cancellationToken = default(CancellationToken))
-        {           
-            cancellationToken.ThrowIfCancellationRequested();
-
+        public async Task<bool> RemoveAsDefaultProtocolClientAsync(string protocol, string path, string[] args)
+        {
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appRemoveAsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appRemoveAsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol, path, args);
+            BridgeConnector.Socket.Emit("appRemoveAsDefaultProtocolClient", protocol, path, args);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -846,26 +786,20 @@ namespace ElectronNET.API
         /// the Windows Registry and LSCopyDefaultHandlerForURLScheme internally.
         /// </summary>
         /// <param name="protocol">The name of your protocol, without ://.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns Boolean</returns>
-        public async Task<bool> IsDefaultProtocolClientAsync(string protocol, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> IsDefaultProtocolClientAsync(string protocol)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol);
+            BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }            
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -879,26 +813,20 @@ namespace ElectronNET.API
         /// </summary>
         /// <param name="protocol">The name of your protocol, without ://.</param>
         /// <param name="path">Defaults to process.execPath.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns Boolean</returns>
-        public async Task<bool> IsDefaultProtocolClientAsync(string protocol, string path, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> IsDefaultProtocolClientAsync(string protocol, string path)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol, path);
+            BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol, path);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -913,26 +841,20 @@ namespace ElectronNET.API
         /// <param name="protocol">The name of your protocol, without ://.</param>
         /// <param name="path">Defaults to process.execPath.</param>
         /// <param name="args">Defaults to an empty array.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns Boolean</returns>
-        public async Task<bool> IsDefaultProtocolClientAsync(string protocol, string path, string[] args, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> IsDefaultProtocolClientAsync(string protocol, string path, string[] args)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appIsDefaultProtocolClientCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appIsDefaultProtocolClientCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol, path, args);
+            BridgeConnector.Socket.Emit("appIsDefaultProtocolClient", protocol, path, args);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -941,50 +863,39 @@ namespace ElectronNET.API
         /// app.setJumpList(categories) instead.
         /// </summary>
         /// <param name="userTasks">Array of Task objects.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> SetUserTasksAsync(UserTask[] userTasks, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> SetUserTasksAsync(UserTask[] userTasks)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appSetUserTasksCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appSetUserTasksCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appSetUserTasksCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appSetUserTasksCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appSetUserTasks", JObject.FromObject(userTasks, _jsonSerializer));
+            BridgeConnector.Socket.Emit("appSetUserTasks", JObject.FromObject(userTasks, _jsonSerializer));
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// Jump List settings for the application.
         /// </summary>
         /// <returns></returns>
-        public async Task<JumpListSettings> GetJumpListSettingsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<JumpListSettings> GetJumpListSettingsAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<JumpListSettings>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetJumpListSettingsCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appGetJumpListSettingsCompleted", (jumplistSettings) =>
-                {
-                    BridgeConnector.Socket.Off("appGetJumpListSettingsCompleted");
-                    taskCompletionSource.SetResult(JObject.Parse(jumplistSettings.ToString()).ToObject<JumpListSettings>());
-                });
+                BridgeConnector.Socket.Off("appGetJumpListSettingsCompleted");
+                taskCompletionSource.SetResult(JObject.Parse(success.ToString()).ToObject<JumpListSettings>());
+            });
 
-                BridgeConnector.Socket.Emit("appGetJumpListSettings");
+            BridgeConnector.Socket.Emit("appGetJumpListSettings");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1028,38 +939,32 @@ namespace ElectronNET.API
         /// </summary>
         /// <param name="newInstanceOpened">Lambda with an array of the second instance’s command line arguments.
         /// The second parameter is the working directory path.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>This method returns false if your process is the primary instance of 
         /// the application and your app should continue loading. And returns true if your 
         /// process has sent its parameters to another instance, and you should immediately quit.</returns>
-        public async Task<bool> MakeSingleInstanceAsync(Action<string[], string> newInstanceOpened, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> MakeSingleInstanceAsync(Action<string[], string> newInstanceOpened)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appMakeSingleInstanceCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appMakeSingleInstanceCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appMakeSingleInstanceCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appMakeSingleInstanceCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Off("newInstanceOpened");
-                BridgeConnector.Socket.On("newInstanceOpened", (result) =>
-                {
-                    JArray results = (JArray)result;
-                    string[] args = results.First.ToObject<string[]>();
-                    string workdirectory = results.Last.ToObject<string>();
+            BridgeConnector.Socket.Off("newInstanceOpened");
+            BridgeConnector.Socket.On("newInstanceOpened", (result) =>
+            {
+                JArray results = (JArray)result;
+                string[] args = results.First.ToObject<string[]>();
+                string workdirectory = results.Last.ToObject<string>();
 
-                    newInstanceOpened(args, workdirectory);
-                });
+                newInstanceOpened(args, workdirectory);
+            });
 
-                BridgeConnector.Socket.Emit("appMakeSingleInstance");
+            BridgeConnector.Socket.Emit("appMakeSingleInstance");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1098,24 +1003,19 @@ namespace ElectronNET.API
         /// The type of the currently running activity.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> GetCurrentActivityTypeAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> GetCurrentActivityTypeAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetCurrentActivityTypeCompleted", (activityType) =>
             {
-                BridgeConnector.Socket.On("appGetCurrentActivityTypeCompleted", (activityType) =>
-                {
-                    BridgeConnector.Socket.Off("appGetCurrentActivityTypeCompleted");
-                    taskCompletionSource.SetResult(activityType.ToString());
-                });
+                BridgeConnector.Socket.Off("appGetCurrentActivityTypeCompleted");
+                taskCompletionSource.SetResult(activityType.ToString());
+            });
 
-                BridgeConnector.Socket.Emit("appGetCurrentActivityType");
+            BridgeConnector.Socket.Emit("appGetCurrentActivityType");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1133,78 +1033,62 @@ namespace ElectronNET.API
         /// success while any other value indicates failure according to chromium net_error_list.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Result of import. Value of 0 indicates success.</returns>
-        public async Task<int> ImportCertificateAsync(ImportCertificateOptions options, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> ImportCertificateAsync(ImportCertificateOptions options)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<int>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appImportCertificateCompleted", (result) =>
             {
-                BridgeConnector.Socket.On("appImportCertificateCompleted", (result) =>
-                {
-                    BridgeConnector.Socket.Off("appImportCertificateCompleted");
-                    taskCompletionSource.SetResult((int)result);
-                });
+                BridgeConnector.Socket.Off("appImportCertificateCompleted");
+                taskCompletionSource.SetResult((int)result);
+            });
 
-                BridgeConnector.Socket.Emit("appImportCertificate", JObject.FromObject(options, _jsonSerializer));
+            BridgeConnector.Socket.Emit("appImportCertificate", JObject.FromObject(options, _jsonSerializer));
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// Memory and cpu usage statistics of all the processes associated with the app.
         /// </summary>
         /// <returns></returns>
-        public async Task<ProcessMetric[]> GetAppMetricsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<ProcessMetric[]> GetAppMetricsAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<ProcessMetric[]>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetAppMetricsCompleted", (result) =>
             {
-                BridgeConnector.Socket.On("appGetAppMetricsCompleted", (result) =>
-                {
-                    BridgeConnector.Socket.Off("appGetAppMetricsCompleted");
-                    var processMetrics = ((JArray)result).ToObject<ProcessMetric[]>();
+                BridgeConnector.Socket.Off("appGetAppMetricsCompleted");
+                var processMetrics = ((JArray)result).ToObject<ProcessMetric[]>();
 
-                    taskCompletionSource.SetResult(processMetrics);
-                });
+                taskCompletionSource.SetResult(processMetrics);
+            });
 
-                BridgeConnector.Socket.Emit("appGetAppMetrics");
+            BridgeConnector.Socket.Emit("appGetAppMetrics");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// The Graphics Feature Status from chrome://gpu/.
         /// </summary>
         /// <returns></returns>
-        public async Task<GPUFeatureStatus> GetGpuFeatureStatusAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<GPUFeatureStatus> GetGpuFeatureStatusAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<GPUFeatureStatus>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetGpuFeatureStatusCompleted", (result) =>
             {
-                BridgeConnector.Socket.On("appGetGpuFeatureStatusCompleted", (result) =>
-                {
-                    BridgeConnector.Socket.Off("appGetGpuFeatureStatusCompleted");
-                    var gpuFeatureStatus = ((JObject)result).ToObject<GPUFeatureStatus>();
+                BridgeConnector.Socket.Off("appGetGpuFeatureStatusCompleted");
+                var gpuFeatureStatus = ((JObject)result).ToObject<GPUFeatureStatus>();
 
-                    taskCompletionSource.SetResult(gpuFeatureStatus);
-                });
+                taskCompletionSource.SetResult(gpuFeatureStatus);
+            });
 
-                BridgeConnector.Socket.Emit("appGetGpuFeatureStatus");
+            BridgeConnector.Socket.Emit("appGetGpuFeatureStatus");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1215,72 +1099,57 @@ namespace ElectronNET.API
         /// </summary>
         /// <param name="count"></param>
         /// <returns>Whether the call succeeded.</returns>
-        public async Task<bool> SetBadgeCountAsync(int count, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> SetBadgeCountAsync(int count)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appSetBadgeCountCompleted", (success) =>
             {
-                BridgeConnector.Socket.On("appSetBadgeCountCompleted", (success) =>
-                {
-                    BridgeConnector.Socket.Off("appSetBadgeCountCompleted");
-                    taskCompletionSource.SetResult((bool)success);
-                });
+                BridgeConnector.Socket.Off("appSetBadgeCountCompleted");
+                taskCompletionSource.SetResult((bool)success);
+            });
 
-                BridgeConnector.Socket.Emit("appSetBadgeCount");
+            BridgeConnector.Socket.Emit("appSetBadgeCount", count);
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// The current value displayed in the counter badge.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> GetBadgeCountAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> GetBadgeCountAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<int>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetBadgeCountCompleted", (count) =>
             {
-                BridgeConnector.Socket.On("appGetBadgeCountCompleted", (count) =>
-                {
-                    BridgeConnector.Socket.Off("appGetBadgeCountCompleted");
-                    taskCompletionSource.SetResult((int)count);
-                });
+                BridgeConnector.Socket.Off("appGetBadgeCountCompleted");
+                taskCompletionSource.SetResult((int)count);
+            });
 
-                BridgeConnector.Socket.Emit("appGetBadgeCount");
+            BridgeConnector.Socket.Emit("appGetBadgeCount");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
         /// Whether the current desktop environment is Unity launcher.
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> IsUnityRunningAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> IsUnityRunningAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appIsUnityRunningCompleted", (isUnityRunning) =>
             {
-                BridgeConnector.Socket.On("appIsUnityRunningCompleted", (isUnityRunning) =>
-                {
-                    BridgeConnector.Socket.Off("appIsUnityRunningCompleted");
-                    taskCompletionSource.SetResult((bool)isUnityRunning);
-                });
+                BridgeConnector.Socket.Off("appIsUnityRunningCompleted");
+                taskCompletionSource.SetResult((bool)isUnityRunning);
+            });
 
-                BridgeConnector.Socket.Emit("appIsUnityRunning");
+            BridgeConnector.Socket.Emit("appIsUnityRunning");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1289,24 +1158,19 @@ namespace ElectronNET.API
         /// API has no effect on MAS builds.
         /// </summary>
         /// <returns></returns>
-        public async Task<LoginItemSettings> GetLoginItemSettingsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<LoginItemSettings> GetLoginItemSettingsAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<LoginItemSettings>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetLoginItemSettingsCompleted", (loginItemSettings) =>
             {
-                BridgeConnector.Socket.On("appGetLoginItemSettingsCompleted", (loginItemSettings) =>
-                {
-                    BridgeConnector.Socket.Off("appGetLoginItemSettingsCompleted");
-                    taskCompletionSource.SetResult((LoginItemSettings)loginItemSettings);
-                });
+                BridgeConnector.Socket.Off("appGetLoginItemSettingsCompleted");
+                taskCompletionSource.SetResult((LoginItemSettings)loginItemSettings);
+            });
 
-                BridgeConnector.Socket.Emit("appGetLoginItemSettings");
+            BridgeConnector.Socket.Emit("appGetLoginItemSettings");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1315,26 +1179,20 @@ namespace ElectronNET.API
         /// API has no effect on MAS builds.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<LoginItemSettings> GetLoginItemSettingsAsync(LoginItemSettingsOptions options, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<LoginItemSettings> GetLoginItemSettingsAsync(LoginItemSettingsOptions options)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<LoginItemSettings>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appGetLoginItemSettingsCompleted", (loginItemSettings) =>
             {
-                BridgeConnector.Socket.On("appGetLoginItemSettingsCompleted", (loginItemSettings) =>
-                {
-                    BridgeConnector.Socket.Off("appGetLoginItemSettingsCompleted");
-                    taskCompletionSource.SetResult((LoginItemSettings)loginItemSettings);
-                });
+                BridgeConnector.Socket.Off("appGetLoginItemSettingsCompleted");
+                taskCompletionSource.SetResult((LoginItemSettings)loginItemSettings);
+            });
 
-                BridgeConnector.Socket.Emit("appGetLoginItemSettings", JObject.FromObject(options, _jsonSerializer));
+            BridgeConnector.Socket.Emit("appGetLoginItemSettings", JObject.FromObject(options, _jsonSerializer));
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1354,24 +1212,19 @@ namespace ElectronNET.API
         /// See https://www.chromium.org/developers/design-documents/accessibility for more details.
         /// </summary>
         /// <returns>true if Chrome’s accessibility support is enabled, false otherwise.</returns>
-        public async Task<bool> IsAccessibilitySupportEnabledAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> IsAccessibilitySupportEnabledAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appIsAccessibilitySupportEnabledCompleted", (isAccessibilitySupportEnabled) =>
             {
-                BridgeConnector.Socket.On("appIsAccessibilitySupportEnabledCompleted", (isAccessibilitySupportEnabled) =>
-                {
-                    BridgeConnector.Socket.Off("appIsAccessibilitySupportEnabledCompleted");
-                    taskCompletionSource.SetResult((bool)isAccessibilitySupportEnabled);
-                });
+                BridgeConnector.Socket.Off("appIsAccessibilitySupportEnabledCompleted");
+                taskCompletionSource.SetResult((bool)isAccessibilitySupportEnabled);
+            });
 
-                BridgeConnector.Socket.Emit("appIsAccessibilitySupportEnabled");
+            BridgeConnector.Socket.Emit("appIsAccessibilitySupportEnabled");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1432,26 +1285,20 @@ namespace ElectronNET.API
         /// either the application becomes active or the request is canceled.
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<int> DockBounceAsync(DockBounceType type, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> DockBounceAsync(DockBounceType type)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<int>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appDockBounceCompleted", (id) =>
             {
-                BridgeConnector.Socket.On("appDockBounceCompleted", (id) =>
-                {
-                    BridgeConnector.Socket.Off("appDockBounceCompleted");
-                    taskCompletionSource.SetResult((int)id);
-                });
+                BridgeConnector.Socket.Off("appDockBounceCompleted");
+                taskCompletionSource.SetResult((int)id);
+            });
 
-                BridgeConnector.Socket.Emit("appDockBounce", type.ToString());
+            BridgeConnector.Socket.Emit("appDockBounce", type.ToString());
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1485,24 +1332,19 @@ namespace ElectronNET.API
         /// Gets the string to be displayed in the dock’s badging area.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> DockGetBadgeAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> DockGetBadgeAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<string>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appDockGetBadgeCompleted", (text) =>
             {
-                BridgeConnector.Socket.On("appDockGetBadgeCompleted", (text) =>
-                {
-                    BridgeConnector.Socket.Off("appDockGetBadgeCompleted");
-                    taskCompletionSource.SetResult((string)text);
-                });
+                BridgeConnector.Socket.Off("appDockGetBadgeCompleted");
+                taskCompletionSource.SetResult((string)text);
+            });
 
-                BridgeConnector.Socket.Emit("appDockGetBadge");
+            BridgeConnector.Socket.Emit("appDockGetBadge");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         /// <summary>
@@ -1526,24 +1368,19 @@ namespace ElectronNET.API
         /// so this method might not return true immediately after that call.
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> DockIsVisibleAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> DockIsVisibleAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+
+            BridgeConnector.Socket.On("appDockIsVisibleCompleted", (isVisible) =>
             {
-                BridgeConnector.Socket.On("appDockIsVisibleCompleted", (isVisible) =>
-                {
-                    BridgeConnector.Socket.Off("appDockIsVisibleCompleted");
-                    taskCompletionSource.SetResult((bool)isVisible);
-                });
+                BridgeConnector.Socket.Off("appDockIsVisibleCompleted");
+                taskCompletionSource.SetResult((bool)isVisible);
+            });
 
-                BridgeConnector.Socket.Emit("appDockIsVisible");
+            BridgeConnector.Socket.Emit("appDockIsVisible");
 
-                return await taskCompletionSource.Task
-                    .ConfigureAwait(false);
-            }
+            return await taskCompletionSource.Task;
         }
 
         // TODO: Menu lösung für macOS muss gemacht werden und imeplementiert
