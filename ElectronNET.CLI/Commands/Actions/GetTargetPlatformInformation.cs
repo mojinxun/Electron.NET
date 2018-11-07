@@ -19,11 +19,22 @@ namespace ElectronNET.CLI.Commands.Actions
         {
             string netCorePublishRid = string.Empty;
             string electronPackerPlatform = string.Empty;
+            string architechture = string.Empty;
+
+            switch (RuntimeInformation.OSArchitecture)
+            {
+                case Architecture.X86:
+                    architechture = "x86";
+                    break;
+                default:
+                    architechture = "x64";
+                    break;
+            }
 
             switch (desiredPlatform)
             {
                 case "win":
-                    netCorePublishRid = "win-x64";
+                    netCorePublishRid = "win-" + architechture;
                     electronPackerPlatform = "win32";
                     break;
                 case "osx":
@@ -38,7 +49,7 @@ namespace ElectronNET.CLI.Commands.Actions
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         desiredPlatform = "win";
-                        netCorePublishRid = "win-x64";
+                        netCorePublishRid = "win-" + architechture;
                         electronPackerPlatform = "win32";
                     }
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
